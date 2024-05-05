@@ -1,17 +1,19 @@
 package glide
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 )
 
 // Client is a minimal 'Glide' client.
 type Client struct {
-	ApiKey    string
-	UserAgent string
-	BaseURL   *url.URL
-
+	ApiKey     string
+	UserAgent  string
+	BaseURL    *url.URL
 	httpClient *http.Client
+
+	Language LanguageSvc
 }
 
 type ClientOption func(*Client) error
@@ -26,6 +28,8 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	}, options...)
 
 	client := &Client{}
+	client.Language = &language{client}
+
 	for _, option := range options {
 		if err := option(client); err != nil {
 			return nil, err
@@ -80,7 +84,7 @@ func WithHttpClient(httpClient *http.Client) ClientOption {
 }
 
 // Health returns nil if the service is healthy.
-func (c *Client) Health() error {
+func (c *Client) Health(ctx context.Context) error {
 	// TODO.
 	return nil
 }

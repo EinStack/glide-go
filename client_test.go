@@ -1,14 +1,16 @@
 package glide_test
 
 import (
-	"github.com/einstack/glide-go"
+	"context"
 	"testing"
+
+	"github.com/einstack/glide-go"
 )
 
 func TestNewClient(t *testing.T) {
 	if _, err := glide.NewClient(
 		glide.WithApiKey("testing"),
-		glide.WithUserAgent("Axiston/1.0"),
+		glide.WithUserAgent("Einstack/1.0"),
 	); err != nil {
 		t.Error(err)
 	}
@@ -19,7 +21,8 @@ func TestClient_Health(t *testing.T) {
 		glide.WithApiKey("testing"),
 	)
 
-	if err := client.Health(); err != nil {
+	ctx := context.Background()
+	if err := client.Health(ctx); err != nil {
 		t.Error(err)
 	}
 }
