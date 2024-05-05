@@ -1,6 +1,8 @@
 package glide
 
-import "context"
+import (
+	"context"
+)
 
 // RouterConfig TODO.
 type RouterConfig struct {
@@ -8,6 +10,12 @@ type RouterConfig struct {
 
 // ChatRequest TODO.
 type ChatRequest struct {
+}
+
+// NewChatRequest instantiates a new ChatRequest.
+func NewChatRequest() ChatRequest {
+	// TODO.
+	return ChatRequest{}
 }
 
 // ChatResponse TODO.
@@ -25,12 +33,12 @@ type language struct {
 	client *Client
 }
 
-func (impl *language) List(ctx context.Context) ([]RouterConfig, error) {
+func (svc *language) List(ctx context.Context) ([]RouterConfig, error) {
 	// TODO.
 	return nil, nil
 }
 
-func (impl *language) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
+func (svc *language) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
 	// TODO.
 	return nil, nil
 }

@@ -20,7 +20,7 @@ func TestLanguage_Chat(t *testing.T) {
 	client, _ := glide.NewClient()
 
 	ctx := context.Background()
-	req := glide.ChatRequest{}
+	req := glide.NewChatRequest()
 	if _, err := client.Language.Chat(ctx, req); err != nil {
 		t.Error(err)
 	}
