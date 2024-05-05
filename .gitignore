@@ -1,0 +1,37 @@
+# OS
+Thumbs.db
+.DS_Store
+*.pdb
+
+# Editors
+.vs/
+.vscode/
+.idea/
+.fleet/
+
+# Lang: Go
+vendor/
+*.test
+go.work
+*.out
+
+# Output
+dist/
+build/
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Environment
+env/
+.env
+.env*
+
+# Logs
+logs/
+*.log
+*.log*
