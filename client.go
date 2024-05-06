@@ -44,8 +44,7 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	return client, nil
 }
 
-// WithApiKey replaces the api key.
-// Default value: 'development'.
+// WithApiKey attaches the api key.
 // Env variable 'GLIDE_API_KEY'.
 func WithApiKey(apiKey string) ClientOption {
 	return func(client *Client) error {
@@ -112,7 +111,10 @@ func (c *Client) Build(ctx context.Context, method, path string, data any) (*htt
 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", c.UserAgent)
-	req.Header.Set("Authorization", "Bearer "+c.ApiKey)
+
+	if len(c.ApiKey) > 0 {
+		req.Header.Set("Authorization", "Bearer "+c.ApiKey)
+	}
 
 	return req, nil
 }
