@@ -1,18 +1,13 @@
-name: Build
+name: Publish
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest ]
         version: [ 1.22 ]
     runs-on: ${{ matrix.os }}
     steps:
@@ -25,9 +20,3 @@ jobs:
         with:
           go-version: ${{ matrix.version }}
           check-latest: true
-
-      - name: Run Make:lint
-        run: make lint
-
-      - name: Run Make:test
-        run: make test

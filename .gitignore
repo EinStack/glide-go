@@ -1,7 +1,6 @@
 # OS
 Thumbs.db
 .DS_Store
-*.pdb
 
 # Editors
 .vs/

@@ -6,13 +6,15 @@ import (
 )
 
 // ClientVersion is the current version of this client.
-var ClientVersion = "0.1.0"
+var clientVersion = "0.1.0"
 
 // GoVersion is the required version of the Go runtime.
-var GoVersion = "1.22.2"
+var goVersion = "1.22.2"
+
+// userAgent is a default User-Agent header value.
+var userAgent = fmt.Sprintf("Glide/%s (Go; Ver. %s)", clientVersion, goVersion)
 
 var envApiKey = getEnv("GLIDE_API_KEY", "")
-var userAgent = fmt.Sprintf("Glide/%s (Go; Ver. %s)", ClientVersion, GoVersion)
 var envUserAgent = getEnv("GLIDE_USER_AGENT", userAgent)
 var envBaseUrl = getEnv("GLIDE_BASE_URL", "http://127.0.0.1:9099/")
 

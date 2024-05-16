@@ -2,25 +2,8 @@ package glide
 
 import (
 	"context"
+	"net/http"
 )
-
-// RouterConfig TODO.
-type RouterConfig struct {
-}
-
-// ChatRequest TODO.
-type ChatRequest struct {
-}
-
-// NewChatRequest instantiates a new ChatRequest.
-func NewChatRequest() ChatRequest {
-	// TODO.
-	return ChatRequest{}
-}
-
-// ChatResponse TODO.
-type ChatResponse struct {
-}
 
 // LanguageSvc implements APIs for '/v1/language' endpoints.
 type LanguageSvc interface {
@@ -37,13 +20,31 @@ type language struct {
 }
 
 func (svc *language) List(ctx context.Context) ([]RouterConfig, error) {
-	// TODO.
-	return nil, nil
+	req, err := svc.client.Build(ctx, http.MethodGet, "/v1/list", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp *RouterList
+	if _, err := svc.client.Send(req, resp); err != nil {
+		return nil, err
+	}
+
+	return resp.Routers, nil
 }
 
 func (svc *language) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
-	// TODO.
-	return nil, nil
+	req2, err := svc.client.Build(ctx, http.MethodPost, "/v1/chat", req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp *ChatResponse
+	if _, err := svc.client.Send(req2, resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (svc *language) ChatStream(ctx context.Context) error {
