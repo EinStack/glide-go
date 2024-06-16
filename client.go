@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/gorilla/websocket"
 )
 
 // Client is a minimal 'Glide' client.
@@ -18,7 +18,7 @@ type Client struct {
 	BaseURL    *url.URL
 	httpClient *http.Client
 
-	Language LanguageSvc
+	Language Language
 }
 
 type ClientOption func(*Client) error
@@ -33,7 +33,7 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	}, options...)
 
 	client := &Client{}
-	client.Language = &language{client}
+	client.Language = &languageSvc{client}
 
 	for _, option := range options {
 		if err := option(client); err != nil {
@@ -127,10 +127,15 @@ func (c *Client) Send(r *http.Request, ret any) (*http.Response, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode > http.StatusBadRequest {
-		// TODO: Decode into ErrorResponse.
-		reason := fmt.Sprintf("status code: %d", resp.StatusCode)
-		return nil, errors.New(reason)
+	if resp.StatusCode >= http.StatusBadRequest {
+		var errorResp Error
+		err := json.NewDecoder(resp.Body).Decode(&errorResp)
+		if err != nil {
+			return nil, err
+		}
+
+		errorResp.Status = resp.StatusCode
+		return nil, &errorResp
 	}
 
 	if resp.StatusCode != http.StatusNoContent && ret != nil && resp.Body != nil {
@@ -140,6 +145,26 @@ func (c *Client) Send(r *http.Request, ret any) (*http.Response, error) {
 	}
 
 	return resp, nil
+}
+
+// Upgrade establishes the WebSocket connection.
+func (c *Client) Upgrade(ctx context.Context, path string) (*websocket.Conn, error) {
+	abs, err := c.BaseURL.Parse(path)
+	if err != nil {
+		return nil, err
+	}
+
+	header := http.Header{}
+	if len(c.ApiKey) > 0 {
+		header.Set("Authorization", "Bearer "+c.ApiKey)
+	}
+
+	conn, _, err := websocket.DefaultDialer.DialContext(ctx, abs.String(), header)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
 }
 
 // Health returns nil if the service is healthy.

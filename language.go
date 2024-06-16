@@ -2,52 +2,59 @@ package glide
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
-// LanguageSvc implements APIs for '/v1/language' endpoints.
-type LanguageSvc interface {
+// Language implements APIs for '/v1/language' endpoints.
+type Language interface {
 	// List retrieves a list of all router configs.
-	List(ctx context.Context) ([]RouterConfig, error)
+	List(ctx context.Context) (*RouterList, error)
 	// Chat sends a single chat request to a specified router and retrieves the response.
-	Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error)
+	Chat(ctx context.Context, router string, req ChatRequest) (*ChatResponse, error)
 	// ChatStream establishes a WebSocket connection for streaming chat messages from a specified router.
-	ChatStream(ctx context.Context) error
+	ChatStream(ctx context.Context, router string) (Chat, error)
 }
 
-type language struct {
+type languageSvc struct {
 	client *Client
 }
 
-func (svc *language) List(ctx context.Context) ([]RouterConfig, error) {
-	req, err := svc.client.Build(ctx, http.MethodGet, "/v1/list", nil)
+func (svc *languageSvc) List(ctx context.Context) (*RouterList, error) {
+	httpReq, err := svc.client.Build(ctx, http.MethodGet, "/v1/list", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp *RouterList
-	if _, err := svc.client.Send(req, resp); err != nil {
-		return nil, err
-	}
-
-	return resp.Routers, nil
-}
-
-func (svc *language) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, error) {
-	req2, err := svc.client.Build(ctx, http.MethodPost, "/v1/chat", req)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp *ChatResponse
-	if _, err := svc.client.Send(req2, resp); err != nil {
+	if _, err := svc.client.Send(httpReq, resp); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (svc *language) ChatStream(ctx context.Context) error {
-	// TODO.
-	return nil
+func (svc *languageSvc) Chat(ctx context.Context, router string, req ChatRequest) (*ChatResponse, error) {
+	path := fmt.Sprintf("/v1/%s/chat", router)
+	httpReq, err := svc.client.Build(ctx, http.MethodPost, path, req)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp *ChatResponse
+	if _, err := svc.client.Send(httpReq, resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (svc *languageSvc) ChatStream(ctx context.Context, router string) (Chat, error) {
+	path := fmt.Sprintf("/v1/%s/chatStream", router)
+	conn, err := svc.client.Upgrade(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+
+	return newChatService(conn), nil
 }

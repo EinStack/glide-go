@@ -7,6 +7,8 @@ import (
 	"github.com/einstack/glide-go"
 )
 
+var router = "myrouter"
+
 func TestLanguage_List(t *testing.T) {
 	client, _ := glide.NewClient()
 	ctx := context.Background()
@@ -21,7 +23,7 @@ func TestLanguage_Chat(t *testing.T) {
 	ctx := context.Background()
 
 	req := glide.NewChatRequest()
-	if _, err := client.Language.Chat(ctx, req); err != nil {
+	if _, err := client.Language.Chat(ctx, router, req); err != nil {
 		t.Error(err)
 	}
 }
@@ -30,7 +32,7 @@ func TestLanguage_ChatStream(t *testing.T) {
 	client, _ := glide.NewClient()
 	ctx := context.Background()
 
-	if err := client.Language.ChatStream(ctx); err != nil {
+	if _, err := client.Language.ChatStream(ctx, router); err != nil {
 		t.Error(err)
 	}
 }

@@ -12,6 +12,8 @@ Thumbs.db
 vendor/
 *.test
 go.work
+go.sum
+go.work.sum
 *.out
 
 # Output
