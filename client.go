@@ -18,7 +18,7 @@ type Client struct {
 	BaseURL    *url.URL
 	httpClient *http.Client
 
-	Language Language
+	Lang Language
 }
 
 type ClientOption func(*Client) error
@@ -33,7 +33,7 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	}, options...)
 
 	client := &Client{}
-	client.Language = &languageSvc{client}
+	client.Lang = &languageSvc{client}
 
 	for _, option := range options {
 		if err := option(client); err != nil {
@@ -128,14 +128,17 @@ func (c *Client) Send(r *http.Request, ret any) (*http.Response, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= http.StatusBadRequest {
-		var errorResp Error
-		err := json.NewDecoder(resp.Body).Decode(&errorResp)
-		if err != nil {
+		if resp.Body == nil {
+			return nil, NewError()
+		}
+
+		var errorResp *Error
+		if err := json.NewDecoder(resp.Body).Decode(errorResp); err != nil {
 			return nil, err
 		}
 
 		errorResp.Status = resp.StatusCode
-		return nil, &errorResp
+		return nil, errorResp
 	}
 
 	if resp.StatusCode != http.StatusNoContent && ret != nil && resp.Body != nil {

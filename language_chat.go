@@ -2,8 +2,9 @@ package glide
 
 import (
 	"context"
-	"github.com/gorilla/websocket"
 	"io"
+
+	"github.com/gorilla/websocket"
 )
 
 // Chat is a streaming (`WebSocket`) chat connection.
