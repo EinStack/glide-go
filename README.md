@@ -25,4 +25,30 @@ go get github.com/einstack/glide-go
 
 ## Usage
 
-...
+For a full example take a look at [`hello.go`](examples/hello.go).
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	"github.com/einstack/glide-go"
+)
+
+func main() {
+	client, err := glide.NewClient()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req := glide.NewChatRequest("Hello")
+	resp, err := client.Lang.Chat(ctx, "myrouter", req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	println("response: ", resp.Content())
+}
+```

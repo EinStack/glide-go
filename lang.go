@@ -17,17 +17,17 @@ type Language interface {
 }
 
 type languageSvc struct {
-	client *Client
+	config *config
 }
 
 func (svc *languageSvc) List(ctx context.Context) (*RouterList, error) {
-	httpReq, err := svc.client.Build(ctx, http.MethodGet, "/v1/list", nil)
+	httpReq, err := svc.config.Build(ctx, http.MethodGet, "/v1/list", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp *RouterList
-	if _, err := svc.client.Send(httpReq, resp); err != nil {
+	if _, err := svc.config.Send(httpReq, resp); err != nil {
 		return nil, err
 	}
 
@@ -36,13 +36,13 @@ func (svc *languageSvc) List(ctx context.Context) (*RouterList, error) {
 
 func (svc *languageSvc) Chat(ctx context.Context, router string, req ChatRequest) (*ChatResponse, error) {
 	path := fmt.Sprintf("/v1/%s/chat", router)
-	httpReq, err := svc.client.Build(ctx, http.MethodPost, path, req)
+	httpReq, err := svc.config.Build(ctx, http.MethodPost, path, req)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp *ChatResponse
-	if _, err := svc.client.Send(httpReq, resp); err != nil {
+	if _, err := svc.config.Send(httpReq, resp); err != nil {
 		return nil, err
 	}
 
@@ -50,8 +50,9 @@ func (svc *languageSvc) Chat(ctx context.Context, router string, req ChatRequest
 }
 
 func (svc *languageSvc) ChatStream(ctx context.Context, router string) (Chat, error) {
+	// TODO: Change schema to ws/wss.
 	path := fmt.Sprintf("/v1/%s/chatStream", router)
-	conn, err := svc.client.Upgrade(ctx, path)
+	conn, err := svc.config.Upgrade(ctx, path)
 	if err != nil {
 		return nil, err
 	}

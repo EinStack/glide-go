@@ -7,6 +7,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// https://github.com/EinStack/glide/tree/develop/pkg/api/schemas
+
 // Chat is a streaming (`WebSocket`) chat connection.
 type Chat interface {
 	io.Closer
