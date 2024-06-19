@@ -12,7 +12,7 @@ func TestNewClient(t *testing.T) {
 		glide.WithApiKey("testing"),
 		glide.WithUserAgent("Einstack/1.0"),
 	); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -23,6 +23,6 @@ func TestClient_Health(t *testing.T) {
 
 	ctx := context.Background()
 	if _, err := client.Health(ctx); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }

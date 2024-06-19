@@ -7,16 +7,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// https://github.com/EinStack/glide/tree/develop/pkg/api/schemas
-
 // Chat is a streaming (`WebSocket`) chat connection.
 type Chat interface {
 	io.Closer
 
-	// Send TODO.
+	// Send attempts to send the provided chat request.
 	Send(ctx context.Context) error
 
-	// Recv TODO.
+	// Recv attempts to receive the next chat response.
 	Recv(ctx context.Context) error
 }
 
@@ -24,6 +22,7 @@ type chatService struct {
 	conn *websocket.Conn
 }
 
+// newChatService instantiates a new chatService.
 func newChatService(conn *websocket.Conn) *chatService {
 	return &chatService{conn: conn}
 }

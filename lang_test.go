@@ -13,7 +13,7 @@ func TestLanguage_List(t *testing.T) {
 	ctx := context.Background()
 
 	if _, err := client.Lang.List(ctx); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -23,7 +23,7 @@ func TestLanguage_Chat(t *testing.T) {
 
 	req := glide.NewChatRequest("Hello")
 	if _, err := client.Lang.Chat(ctx, router, req); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -31,7 +31,12 @@ func TestLanguage_ChatStream(t *testing.T) {
 	client, _ := glide.NewClient()
 	ctx := context.Background()
 
-	if _, err := client.Lang.ChatStream(ctx, router); err != nil {
-		t.Error(err)
+	chat, err := client.Lang.ChatStream(ctx, router)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := chat.Close(); err != nil {
+		t.Fatal(err)
 	}
 }
