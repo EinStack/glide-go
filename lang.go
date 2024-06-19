@@ -50,7 +50,6 @@ func (svc *languageSvc) Chat(ctx context.Context, router string, req ChatRequest
 }
 
 func (svc *languageSvc) ChatStream(ctx context.Context, router string) (Chat, error) {
-	// TODO: Change schema to ws/wss.
 	path := fmt.Sprintf("/v1/%s/chatStream", router)
 	conn, err := svc.config.Upgrade(ctx, path)
 	if err != nil {

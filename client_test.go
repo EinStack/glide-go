@@ -22,7 +22,7 @@ func TestClient_Health(t *testing.T) {
 	)
 
 	ctx := context.Background()
-	if err := client.Health(ctx); err != nil {
+	if _, err := client.Health(ctx); err != nil {
 		t.Error(err)
 	}
 }

@@ -78,16 +78,41 @@ func WithHttpClient(httpClient *http.Client) ClientOption {
 	}
 }
 
-// Health returns nil if the service is healthy.
-func (c *Client) Health(ctx context.Context) error {
+// ApiKey returns the provided API key, empty string otherwise.
+func (c *Client) ApiKey() string {
+	return c.cfg.apiKey
+}
+
+// UserAgent returns the used 'User-Agent' header value.
+func (c *Client) UserAgent() string {
+	return c.cfg.userAgent
+}
+
+// BaseURL returns the used 'base url.URL'.
+func (c *Client) BaseURL() url.URL {
+	return *c.cfg.baseURL
+}
+
+// HttpClient returns the underlying http.Client.
+func (c *Client) HttpClient() *http.Client {
+	return c.cfg.httpClient
+}
+
+// Health returns true if the service is healthy.
+func (c *Client) Health(ctx context.Context) (*bool, error) {
+	type Health struct {
+		Healthy bool `json:"healthy"`
+	}
+
 	req, err := c.cfg.Build(ctx, http.MethodGet, "/v1/health/", nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if _, err := c.cfg.Send(req, nil); err != nil {
-		return err
+	var resp Health
+	if _, err := c.cfg.Send(req, resp); err != nil {
+		return nil, err
 	}
 
-	return nil
+	return &resp.Healthy, nil
 }
