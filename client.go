@@ -21,13 +21,6 @@ type ClientOption func(*Client) error
 
 // NewClient instantiates a new Client.
 func NewClient(options ...ClientOption) (*Client, error) {
-	options = append([]ClientOption{
-		WithApiKey(envApiKey),
-		WithUserAgent(envUserAgent),
-		WithRawBaseURL(envBaseUrl),
-		WithHttpClient(http.DefaultClient),
-	}, options...)
-
 	client := &Client{config: config.NewConfig()}
 	client.Lang = lang.NewLanguage(client.config)
 

@@ -21,7 +21,13 @@ type Config struct {
 
 // NewConfig instantiates a new Config.
 func NewConfig() *Config {
-	return &Config{}
+	parseBaseURL, _ := url.Parse(envBaseUrl)
+	return &Config{
+		ApiKey:     envApiKey,
+		UserAgent:  envUserAgent,
+		BaseURL:    parseBaseURL,
+		HttpClient: http.DefaultClient,
+	}
 }
 
 // Build instantiates a new http.Request.

@@ -17,6 +17,7 @@ func main() {
 	}
 
 	ctx := context.Background()
+	log.Println(client.UserAgent())
 	if _, err := client.Health(ctx); err != nil {
 		log.Fatal(err)
 	}
@@ -27,5 +28,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	println("response: ", resp.Content())
+	log.Println("response: ", resp.Content())
 }

@@ -1,4 +1,4 @@
-package glide
+package config
 
 import (
 	"fmt"
@@ -13,14 +13,14 @@ var clientVersion = "0.1.0"
 // GoVersion is the required version of the Go runtime.
 var goVersion = getVersion()
 
+// userAgent is a default User-Agent header value.
+var userAgent = fmt.Sprintf("Glide/%s (Go; Ver. %s)", clientVersion, goVersion)
+
 func getVersion() string {
 	version := runtime.Version()
 	after, _ := strings.CutPrefix(version, "go")
 	return after
 }
-
-// userAgent is a default User-Agent header value.
-var userAgent = fmt.Sprintf("Glide/%s (Go; Ver. %s)", clientVersion, goVersion)
 
 var envApiKey = getEnv("GLIDE_API_KEY", "")
 var envUserAgent = getEnv("GLIDE_USER_AGENT", userAgent)

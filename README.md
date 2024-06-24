@@ -5,6 +5,11 @@
     <a href="https://discord.gg/pt53Ej7rrc"><img src="https://img.shields.io/discord/1181281407813828710" alt="Discord" /></a>
     <a href="https://glide.einstack.ai/"><img src="https://img.shields.io/badge/build-view-violet%20?style=flat&logo=books&label=docs&link=https%3A%2F%2Fglide.einstack.ai%2F" alt="Glide Docs" /></a>
     <a href="https://artifacthub.io/packages/helm/einstack/glide"><img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/einstack" alt="ArtifactHub" /></a>
+	<br/>
+	<a href="https://github.com/einstack/glide-go/actions/workflows/build.yaml">
+		<img src="https://img.shields.io/github/actions/workflow/status/einstack/glide-go/build.yaml?branch=main&label=build&logo=github&style=flat-square" alt="Github Action" />
+	</a>
+	<a href="https://pkg.go.dev/github.com/einstack/glide-go"><img src="https://pkg.go.dev/badge/github.com/einstack/glide-go.svg" alt="Go Reference" /></a>
 </div>
 
 ---
@@ -50,6 +55,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	println("response: ", resp.Content())
+	log.Println("response: ", resp.Content())
 }
 ```
