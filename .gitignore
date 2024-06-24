@@ -1,7 +1,6 @@
 # OS
 Thumbs.db
 .DS_Store
-*.pdb
 
 # Editors
 .vs/
@@ -13,6 +12,8 @@ Thumbs.db
 vendor/
 *.test
 go.work
+go.sum
+go.work.sum
 *.out
 
 # Output
@@ -35,3 +36,6 @@ env/
 logs/
 *.log
 *.log*
+
+# Coverage
+coverage.txt

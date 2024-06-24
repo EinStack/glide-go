@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        version: [ 1.22 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.version }}
+          check-latest: true

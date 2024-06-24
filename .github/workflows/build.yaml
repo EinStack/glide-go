@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        version: [ 1.22 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.version }}
+          check-latest: true
+
+      - name: Run Make:lint
+        run: make lint
+
+      - name: Run Make:test
+        run: make test
