@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/einstack/glide-go"
+	"github.com/einstack/glide-go/config"
 )
 
 func TestNewClient(t *testing.T) {
@@ -12,6 +13,14 @@ func TestNewClient(t *testing.T) {
 		glide.WithApiKey("testing"),
 		glide.WithRawBaseURL("http://127.0.0.1:9098/"),
 		glide.WithUserAgent("Einstack/1.0"),
+	); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestNewClientFromConfig(t *testing.T) {
+	if _, err := glide.NewClientFromConfig(
+		config.NewConfig(),
 	); err != nil {
 		t.Fatal(err)
 	}

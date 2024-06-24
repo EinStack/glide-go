@@ -16,7 +16,7 @@ type Error struct {
 func NewError() error {
 	return &Error{
 		Name:    "unrecognized_error",
-		Message: "",
+		Message: "There is no response body and the status code is in the range of 400-599.",
 		Status:  http.StatusInternalServerError,
 	}
 }
