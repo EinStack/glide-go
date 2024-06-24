@@ -130,7 +130,7 @@ func (c *Client) Health(ctx context.Context) (*bool, error) {
 		return nil, err
 	}
 
-	var resp Health
+	var resp *Health
 	if _, err := c.config.Send(req, resp); err != nil {
 		return nil, err
 	}
