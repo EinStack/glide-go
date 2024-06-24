@@ -1,4 +1,4 @@
-package glide
+package lang
 
 // https://github.com/EinStack/glide/tree/develop/pkg/api/schemas
 

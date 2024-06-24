@@ -1,10 +1,11 @@
-package glide_test
+package lang_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/einstack/glide-go"
+	"github.com/einstack/glide-go/lang"
 )
 
 var router = "myrouter"
@@ -22,7 +23,7 @@ func TestLanguage_Chat(t *testing.T) {
 	client, _ := glide.NewClient()
 	ctx := context.Background()
 
-	req := glide.NewChatRequest("Hello")
+	req := lang.NewChatRequest("Hello")
 	if _, err := client.Lang.Chat(ctx, router, req); err != nil {
 		t.Fatal(err)
 	}

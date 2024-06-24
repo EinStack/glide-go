@@ -1,9 +1,11 @@
-package glide
+package lang
 
 import (
 	"context"
 	"fmt"
 	"net/http"
+
+	"github.com/einstack/glide-go/config"
 )
 
 // Language implements APIs for '/v1/language' endpoints.
@@ -17,7 +19,12 @@ type Language interface {
 }
 
 type languageSvc struct {
-	config *config
+	config *config.Config
+}
+
+// NewLanguage instantiates a new Language service.
+func NewLanguage(config *config.Config) Language {
+	return &languageSvc{config: config}
 }
 
 func (svc *languageSvc) List(ctx context.Context) (*RouterList, error) {

@@ -4,14 +4,19 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+
+	"github.com/einstack/glide-go/config"
+	"github.com/einstack/glide-go/lang"
 )
 
-// Client is a minimal 'Glide' client.
+// Client is an Einstack Glide client.
 type Client struct {
-	config *config
-	Lang   Language
+	config *config.Config
+	Lang   lang.Language
 }
 
+// ClientOption is a functional option type for Client.
+// Also see NewClient.
 type ClientOption func(*Client) error
 
 // NewClient instantiates a new Client.
@@ -23,8 +28,8 @@ func NewClient(options ...ClientOption) (*Client, error) {
 		WithHttpClient(http.DefaultClient),
 	}, options...)
 
-	client := &Client{config: &config{}}
-	client.Lang = &languageSvc{client.config}
+	client := &Client{config: config.NewConfig()}
+	client.Lang = lang.NewLanguage(client.config)
 
 	for _, option := range options {
 		if err := option(client); err != nil {
@@ -35,11 +40,18 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	return client, nil
 }
 
+// NewClientFromConfig instantiates a new Client.
+func NewClientFromConfig(config *config.Config) (*Client, error) {
+	client := &Client{config: config}
+	client.Lang = lang.NewLanguage(client.config)
+	return client, nil
+}
+
 // WithApiKey attaches the api key.
 // Use environment variable 'GLIDE_API_KEY' to override.
 func WithApiKey(apiKey string) ClientOption {
 	return func(client *Client) error {
-		client.config.apiKey = apiKey
+		client.config.ApiKey = apiKey
 		return nil
 	}
 }
@@ -49,7 +61,7 @@ func WithApiKey(apiKey string) ClientOption {
 // Use environment variable 'GLIDE_USER_AGENT' to override.
 func WithUserAgent(userAgent string) ClientOption {
 	return func(client *Client) error {
-		client.config.userAgent = userAgent
+		client.config.UserAgent = userAgent
 		return nil
 	}
 }
@@ -64,7 +76,7 @@ func WithRawBaseURL(rawBaseURL string) ClientOption {
 			return err
 		}
 
-		client.config.baseURL = baseURL
+		client.config.BaseURL = baseURL
 		return nil
 	}
 }
@@ -73,7 +85,7 @@ func WithRawBaseURL(rawBaseURL string) ClientOption {
 // Also see WithRawBaseURL.
 func WithBaseURL(baseURL url.URL) ClientOption {
 	return func(client *Client) error {
-		client.config.baseURL = &baseURL
+		client.config.BaseURL = &baseURL
 		return nil
 	}
 }
@@ -82,29 +94,29 @@ func WithBaseURL(baseURL url.URL) ClientOption {
 // Default value: 'http.DefaultClient'.
 func WithHttpClient(httpClient *http.Client) ClientOption {
 	return func(client *Client) error {
-		client.config.httpClient = httpClient
+		client.config.HttpClient = httpClient
 		return nil
 	}
 }
 
 // ApiKey returns the provided API key, empty string otherwise.
 func (c *Client) ApiKey() string {
-	return c.config.apiKey
+	return c.config.ApiKey
 }
 
 // UserAgent returns the used 'User-Agent' header value.
 func (c *Client) UserAgent() string {
-	return c.config.userAgent
+	return c.config.UserAgent
 }
 
 // BaseURL returns the used 'base url.URL'.
 func (c *Client) BaseURL() url.URL {
-	return *c.config.baseURL
+	return *c.config.BaseURL
 }
 
 // HttpClient returns the underlying http.Client.
 func (c *Client) HttpClient() *http.Client {
-	return c.config.httpClient
+	return c.config.HttpClient
 }
 
 // Health returns true if the service is healthy.

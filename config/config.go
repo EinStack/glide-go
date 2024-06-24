@@ -1,4 +1,4 @@
-package glide
+package config
 
 import (
 	"bytes"
@@ -11,16 +11,22 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type config struct {
-	apiKey     string
-	userAgent  string
-	baseURL    *url.URL
-	httpClient *http.Client
+// Config is an http.Client wrapper.
+type Config struct {
+	ApiKey     string
+	UserAgent  string
+	BaseURL    *url.URL
+	HttpClient *http.Client
+}
+
+// NewConfig instantiates a new Config.
+func NewConfig() *Config {
+	return &Config{}
 }
 
 // Build instantiates a new http.Request.
-func (c *config) Build(ctx context.Context, method, path string, data any) (*http.Request, error) {
-	abs, err := c.baseURL.Parse(path)
+func (c *Config) Build(ctx context.Context, method, path string, data any) (*http.Request, error) {
+	abs, err := c.BaseURL.Parse(path)
 	if err != nil {
 		return nil, err
 	}
@@ -41,18 +47,18 @@ func (c *config) Build(ctx context.Context, method, path string, data any) (*htt
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", c.userAgent)
+	req.Header.Set("User-Agent", c.UserAgent)
 
-	if len(c.apiKey) > 0 {
-		req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	if len(c.ApiKey) > 0 {
+		req.Header.Set("Authorization", "Bearer "+c.ApiKey)
 	}
 
 	return req, nil
 }
 
 // Send sends an http.Request and decodes http.Response into ret.
-func (c *config) Send(r *http.Request, ret any) (*http.Response, error) {
-	resp, err := c.httpClient.Do(r)
+func (c *Config) Send(r *http.Request, ret any) (*http.Response, error) {
+	resp, err := c.HttpClient.Do(r)
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +88,11 @@ func (c *config) Send(r *http.Request, ret any) (*http.Response, error) {
 }
 
 // Upgrade establishes the WebSocket connection.
-func (c *config) Upgrade(ctx context.Context, path string) (*websocket.Conn, error) {
-	wsBaseURL := c.baseURL
-	if c.baseURL.Scheme == "https" {
+func (c *Config) Upgrade(ctx context.Context, path string) (*websocket.Conn, error) {
+	wsBaseURL := c.BaseURL
+	if c.BaseURL.Scheme == "https" {
 		wsBaseURL.Scheme = "wss"
-	} else if c.baseURL.Scheme == "http" {
+	} else if c.BaseURL.Scheme == "http" {
 		wsBaseURL.Scheme = "ws"
 	}
 
@@ -96,8 +102,8 @@ func (c *config) Upgrade(ctx context.Context, path string) (*websocket.Conn, err
 	}
 
 	header := http.Header{}
-	if len(c.apiKey) > 0 {
-		header.Set("Authorization", "Bearer "+c.apiKey)
+	if len(c.ApiKey) > 0 {
+		header.Set("Authorization", "Bearer "+c.ApiKey)
 	}
 
 	conn, _, err := websocket.DefaultDialer.DialContext(ctx, abs.String(), header)

@@ -1,4 +1,4 @@
-package glide
+package config
 
 import (
 	"fmt"

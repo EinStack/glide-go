@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/einstack/glide-go"
+	"github.com/einstack/glide-go/lang"
 )
 
 var router = "myrouter"
@@ -20,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	req := glide.NewChatRequest("Hello")
+	req := lang.NewChatRequest("Hello")
 	resp, err := client.Lang.Chat(ctx, router, req)
 	if err != nil {
 		log.Fatal(err)
