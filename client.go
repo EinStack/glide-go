@@ -8,8 +8,8 @@ import (
 
 // Client is a minimal 'Glide' client.
 type Client struct {
-	cfg  *config
-	Lang Language
+	config *config
+	Lang   Language
 }
 
 type ClientOption func(*Client) error
@@ -19,12 +19,12 @@ func NewClient(options ...ClientOption) (*Client, error) {
 	options = append([]ClientOption{
 		WithApiKey(envApiKey),
 		WithUserAgent(envUserAgent),
-		WithBaseURL(envBaseUrl),
+		WithRawBaseURL(envBaseUrl),
 		WithHttpClient(http.DefaultClient),
 	}, options...)
 
-	client := &Client{cfg: &config{}}
-	client.Lang = &languageSvc{client.cfg}
+	client := &Client{config: &config{}}
+	client.Lang = &languageSvc{client.config}
 
 	for _, option := range options {
 		if err := option(client); err != nil {
@@ -39,7 +39,7 @@ func NewClient(options ...ClientOption) (*Client, error) {
 // Use environment variable 'GLIDE_API_KEY' to override.
 func WithApiKey(apiKey string) ClientOption {
 	return func(client *Client) error {
-		client.cfg.apiKey = apiKey
+		client.config.apiKey = apiKey
 		return nil
 	}
 }
@@ -49,22 +49,31 @@ func WithApiKey(apiKey string) ClientOption {
 // Use environment variable 'GLIDE_USER_AGENT' to override.
 func WithUserAgent(userAgent string) ClientOption {
 	return func(client *Client) error {
-		client.cfg.userAgent = userAgent
+		client.config.userAgent = userAgent
 		return nil
 	}
 }
 
-// WithBaseURL replaces the 'base' Url.
+// WithRawBaseURL parses and replaces the base URL.
 // Default value: 'http://127.0.0.1:9099/'.
 // Use environment variable 'GLIDE_BASE_URL' to override.
-func WithBaseURL(baseURL string) ClientOption {
+func WithRawBaseURL(rawBaseURL string) ClientOption {
 	return func(client *Client) error {
-		parsed, err := url.Parse(baseURL)
+		baseURL, err := url.Parse(rawBaseURL)
 		if err != nil {
 			return err
 		}
 
-		client.cfg.baseURL = parsed
+		client.config.baseURL = baseURL
+		return nil
+	}
+}
+
+// WithBaseURL replaces the base URL.
+// Also see WithRawBaseURL.
+func WithBaseURL(baseURL url.URL) ClientOption {
+	return func(client *Client) error {
+		client.config.baseURL = &baseURL
 		return nil
 	}
 }
@@ -73,29 +82,29 @@ func WithBaseURL(baseURL string) ClientOption {
 // Default value: 'http.DefaultClient'.
 func WithHttpClient(httpClient *http.Client) ClientOption {
 	return func(client *Client) error {
-		client.cfg.httpClient = httpClient
+		client.config.httpClient = httpClient
 		return nil
 	}
 }
 
 // ApiKey returns the provided API key, empty string otherwise.
 func (c *Client) ApiKey() string {
-	return c.cfg.apiKey
+	return c.config.apiKey
 }
 
 // UserAgent returns the used 'User-Agent' header value.
 func (c *Client) UserAgent() string {
-	return c.cfg.userAgent
+	return c.config.userAgent
 }
 
 // BaseURL returns the used 'base url.URL'.
 func (c *Client) BaseURL() url.URL {
-	return *c.cfg.baseURL
+	return *c.config.baseURL
 }
 
 // HttpClient returns the underlying http.Client.
 func (c *Client) HttpClient() *http.Client {
-	return c.cfg.httpClient
+	return c.config.httpClient
 }
 
 // Health returns true if the service is healthy.
@@ -104,13 +113,13 @@ func (c *Client) Health(ctx context.Context) (*bool, error) {
 		Healthy bool `json:"healthy"`
 	}
 
-	req, err := c.cfg.Build(ctx, http.MethodGet, "/v1/health/", nil)
+	req, err := c.config.Build(ctx, http.MethodGet, "/v1/health/", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var resp Health
-	if _, err := c.cfg.Send(req, resp); err != nil {
+	if _, err := c.config.Send(req, resp); err != nil {
 		return nil, err
 	}
 

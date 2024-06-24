@@ -84,9 +84,10 @@ func (c *config) Send(r *http.Request, ret any) (*http.Response, error) {
 // Upgrade establishes the WebSocket connection.
 func (c *config) Upgrade(ctx context.Context, path string) (*websocket.Conn, error) {
 	wsBaseURL := c.baseURL
-	wsBaseURL.Scheme = "ws"
 	if c.baseURL.Scheme == "https" {
 		wsBaseURL.Scheme = "wss"
+	} else if c.baseURL.Scheme == "http" {
+		wsBaseURL.Scheme = "ws"
 	}
 
 	abs, err := wsBaseURL.Parse(path)

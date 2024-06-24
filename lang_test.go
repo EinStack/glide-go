@@ -2,8 +2,9 @@ package glide_test
 
 import (
 	"context"
-	"github.com/einstack/glide-go"
 	"testing"
+
+	"github.com/einstack/glide-go"
 )
 
 var router = "myrouter"

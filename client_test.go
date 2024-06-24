@@ -10,6 +10,7 @@ import (
 func TestNewClient(t *testing.T) {
 	if _, err := glide.NewClient(
 		glide.WithApiKey("testing"),
+		glide.WithRawBaseURL("http://127.0.0.1:9098/"),
 		glide.WithUserAgent("Einstack/1.0"),
 	); err != nil {
 		t.Fatal(err)
